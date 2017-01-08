@@ -101,12 +101,14 @@ class Message implements ProtocolImplementationInterface
      */
     public function toString()
     {
+        $custom_parameters = $this->getCustomParameters();
+        $message = '<message type="%s" id="%s" to="%s" ' . $custom_parameters . '><body>%s</body></message>';
+        
         return XML::quoteMessage(
-            '<message type="%s" id="%s" to="%s" %s><body>%s</body></message>',
+            $message,
             $this->getType(),
             XML::generateId(),
             $this->getTo(),
-            $this->getCustomParameters(),
             $this->getMessage()
         );
     }
