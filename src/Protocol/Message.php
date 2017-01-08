@@ -78,6 +78,13 @@ class Message implements ProtocolImplementationInterface
     protected $message = '';
 
     /**
+     * Custom parameters.
+     *
+     * @var array
+     */
+    protected $custom_parameters = [];
+
+    /**
      * Constructor.
      *
      * @param string $message
@@ -95,10 +102,11 @@ class Message implements ProtocolImplementationInterface
     public function toString()
     {
         return XML::quoteMessage(
-            '<message type="%s" id="%s" to="%s"><body>%s</body></message>',
+            '<message type="%s" id="%s" to="%s" %s><body>%s</body></message>',
             $this->getType(),
             XML::generateId(),
             $this->getTo(),
+            $this->getCustomParameters(),
             $this->getMessage()
         );
     }
@@ -169,5 +177,34 @@ class Message implements ProtocolImplementationInterface
     {
         $this->message = (string) $message;
         return $this;
+    }
+
+    /**
+     * Add custom parameter.
+     *
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
+    public function addCustomParameter($key, $value)
+    {
+        $this->custom_parameters[$key] = (string) $value;
+        return $this;
+    }
+
+    /**
+     * Get custom parameters.
+     *
+     * @return $this
+     */
+    public function getCustomParameters()
+    {
+        $parameters = [];
+
+        foreach ($this->custom_parameters as $name => $value) {
+            $parameters[] = $name . '="' . $value . '"';
+        }
+
+        return implode(' ', $parameters);
     }
 }
